@@ -7,6 +7,8 @@ export interface BooleanWidgetProps extends FieldBasicProps {
 
   type: 'boolean';
 
+  simplify?: boolean;
+
 }
 
 const ENTITY_CAPTURE = [EntityKind.SHELL];
@@ -36,6 +38,12 @@ export const BooleanWidgetDefinition = (props: BooleanWidgetProps) => ({
           optional: true,
           defaultValue: props.defaultValue||'NONE',
           values: BOOLEAN_OPTIONS
+        },
+        {
+          name: "simplify",
+          label: 'simplify',
+          type: "checkbox",
+          defaultValue: true
         },
         {
           name: "targets",

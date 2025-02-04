@@ -34,13 +34,7 @@ module.exports = {
   devServer: {
     hot: false,
     liveReload: false,
-    client: {
-      logging: 'error',
-      overlay: {
-        errors: true,
-        warnings: false
-      }
-    },
+    client: false,
     static: [
       path.join(__dirname, 'web'),
     ],
@@ -59,18 +53,6 @@ module.exports = {
         test: /\.(js|jsx|ts|tsx)$/,
         loader: 'babel-loader',
         include: [MODULES, WEB_APP, INTEGRATION_TESTS]
-      },
-      {
-        //Temporary until dxf-writer library publishes browser friendly bundle
-        test: /\.js$/,
-        include: [`${NODE_MODULES}/dxf-writer`],
-        loader: 'babel-loader',
-        options: {
-          presets: ['@babel/preset-env'],
-          plugins: [
-            "@babel/proposal-class-properties"
-          ]
-        }
       },
       {
         test: /\.(less|css)$/,

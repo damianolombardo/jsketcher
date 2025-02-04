@@ -21,7 +21,12 @@ import {PatternRadialOperation} from "./features/patternRadial/patternRadial.ope
 import {ImportModelOperation} from "./features/importModel/importModel.operation";
 import {DeleteBodyOperation} from "./features/deleteBody/deleteBody.operation";
 import {DefeatureRemoveFaceOperation} from "./features/defeatureRemoveFace/defeatureRemoveFace.operation";
+import { WireLineOperation } from "./features/wireLine/wireLine";
+import { MoveBodyOperation } from "./features/moveBody/moveBody.operation"
 //imports of action type commands
+import {GetInfo} from "./actions/getInfo/getInfo.action";
+import {ExportBREP} from "./actions/exportBREP/exportBREP.action";
+//import workbench icon
 import {GiCubes} from "react-icons/gi";
 
 
@@ -49,9 +54,14 @@ export const ModelerWorkspace: WorkbenchConfig = {
     ImportModelOperation,
     DeleteBodyOperation,
     DefeatureRemoveFaceOperation,
+    WireLineOperation,
+    MoveBodyOperation,
+
+    GetInfo,
+    ExportBREP,
   ],
   actions: [
-    // GetVolume,
+     //GetVolume,
   ],
   ui: {
     toolbar: [
@@ -63,11 +73,13 @@ export const ModelerWorkspace: WorkbenchConfig = {
 
       "SHELL_TOOL", "FILLET_TOOL", "SCALE_BODY", "DEFEATURE_REMOVE_FACE", "-",
 
-      "MIRROR_BODY", "PATTERN_LINEAR", "PATTERN_RADIAL", "-",
+      "MIRROR_BODY", "PATTERN_LINEAR", "PATTERN_RADIAL", "MOVE_BODY" ,"-",
 
       "CYLINDER", "BOX", "CONE", "SPHERE", "TORUS", "-",
 
-      "HOLE_TOOL", "-", 'GET_VOLUME', "IMPORT_MODEL", "DELETE_BODY",
+      "HOLE_TOOL", "-", 'GET_INFO', "IMPORT_MODEL", "DELETE_BODY", "-",
+      
+      "WIRE_LINE", 'EXPORT_BREP',
     ]
   },
   icon: GiCubes

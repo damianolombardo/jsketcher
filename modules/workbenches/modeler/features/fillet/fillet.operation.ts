@@ -7,9 +7,10 @@ import {FromMObjectProductionAnalyzer} from "cad/craft/production/productionAnal
 import {MEdge} from "cad/model/medge";
 import {MObject} from "cad/model/mobject";
 import {MShell} from "cad/model/mshell";
+import { MBrepFace } from 'cad/model/mface';
 
 interface FilletParams {
-  edges: MEdge[],
+  edges: MEdge[] | MBrepFace[],
   size: number
   opperationType: 'Champher'|'Fillet'
 }
@@ -25,13 +26,23 @@ export const FilletOperation: OperationDescriptor<any> = {
 
     const occ = ctx.occService;
     const oci = occ.commandInterface;
+    let edgeList = [];
 
+    //check if input contains faces and if a face is an input add all adjacent edges to list for processing. 
+    params.edges.forEach((edge) => {
+      if(edge.TYPE === EntityKind.FACE){
+        edgeList = edgeList.concat(edge.edges);
+      }
+      if(edge.TYPE === EntityKind.EDGE){
+        edgeList.push(edge);
+      }
+    });
+
+    
     //add all the edges and size to seperate arrays for each shell that edges are selected from
-
     const groups = new Map<MShell, any[]>()
 
-    params.edges.forEach((edge) => {
-
+    edgeList.forEach((edge) => {
       let shellArgs = groups.get(edge.shell);
       if (!shellArgs) {
         shellArgs = [];
@@ -50,9 +61,10 @@ export const FilletOperation: OperationDescriptor<any> = {
     });
 
     //perform the opperations on each of the bodies.
-    const result = {
+    let result = {
       created: [],
-      consumed: Array.from(groups.keys())
+      consumed: Array.from(groups.keys()),
+      error: {},
     }
 
     const analyzer = new FromMObjectProductionAnalyzer(result.consumed);
@@ -68,13 +80,38 @@ export const FilletOperation: OperationDescriptor<any> = {
       result.created.push(occ.io.getShell(newShellName, analyzer));
     });
 
+
+    result.created.forEach(function (item, index, arr ){
+      if (item.faces.length <=1) result = {
+        created: [],
+        consumed:[],
+        error :{
+          type:"fail",
+          message:"Fillet failed, Try changing radius or remove edge causing failure."
+        },
+      };
+    })
+
+
+
+
+
+    if (result.created[0].faces.length <=1) result = {
+      created: [],
+      consumed:[],
+      error :{
+        type:"fail",
+        message:"Fillet failed, Try changing radius or remove edge causing failure."
+      },
+    };
+
     return result;
   },
   form: [
     {
       type: 'selection',
       name: 'edges',
-      capture: [EntityKind.EDGE],
+      capture: [EntityKind.EDGE,EntityKind.FACE],
       label: 'edges',
       multi: true,
       defaultValue: {
